@@ -298,24 +298,15 @@ I love you forever.......
 <script>
 /* HEARTS */
 const heartsContainer = document.getElementById("hearts");
-let heartInterval;
-let heartRate = 550;
-let isScrolling = false;
-let scrollTimeout;
-window.addEventListener("scroll", () => {
-  isScrolling = true;
-  clearTimeout(scrollTimeout);
 
-  scrollTimeout = setTimeout(() => {
-    isScrolling = false;
-  }, 150);
-}, { passive: true });
-
+let lastHeartTime = 0;
+let heartDelay = 550; // ms
+let maxHearts = 25;
 
 /* MUSIC */
 const music = document.getElementById("bgMusic");
-music.muted = true;     // start muted
-music.volume = 0.9;    // set volume (will apply after unmute)
+music.muted = true;
+music.volume = 0.9;
 
 const songs = [
   "music/page1.mp3",
@@ -337,34 +328,40 @@ const nextBtn = document.getElementById("nextBtn");
 const darknessLevels = [0,0.08,0.18,0.35,0.55,0.75];
 let index = 0;
 
-/* HEART SPAWN */
-function startHearts(){
-  clearInterval(heartInterval);
-  heartInterval = setInterval(() => {
+/* HEART SPAWN (MOBILE SAFE) */
+function spawnHeart(){
+  if (document.hidden) return;
 
-    if(isScrolling) return; // 🔥 KEY LINE
+  if (heartsContainer.children.length >= maxHearts) return;
 
-    const heart = document.createElement("div");
-    heart.className = "heart";
-    heart.innerHTML = "❤";
-    heart.style.left = Math.random()*100 + "vw";
+  const heart = document.createElement("div");
+  heart.className = "heart";
+  heart.innerHTML = "❤";
+  heart.style.left = Math.random() * 100 + "vw";
 
-    const isFinal = index === pages.length - 1;
-    heart.style.fontSize = (isFinal ? Math.random()*24 + 26 : Math.random()*14 + 14) + "px";
-    heart.style.animationDuration = Math.random()*6 + 9 + "s";
+  const isFinal = index === pages.length - 1;
+  heart.style.fontSize = (isFinal ? Math.random()*24 + 26 : Math.random()*14 + 14) + "px";
+  heart.style.animationDuration = Math.random()*6 + 9 + "s";
 
-    heart.style.color = isFinal
-      ? "rgba(255,0,60,1)"
-      : (Math.random() > 0.5
-          ? "rgba(180,0,40,.9)"
-          : "rgba(25,15,15,.85)");
+  heart.style.color = isFinal
+    ? "rgba(255,0,60,1)"
+    : (Math.random() > 0.5
+        ? "rgba(180,0,40,.9)"
+        : "rgba(25,15,15,.85)");
 
-    heartsContainer.appendChild(heart);
-    setTimeout(() => heart.remove(), 18000);
-
-  }, heartRate);
+  heartsContainer.appendChild(heart);
+  setTimeout(() => heart.remove(), 18000);
 }
 
+/* HEART LOOP */
+function heartLoop(time){
+  if (time - lastHeartTime > heartDelay) {
+    spawnHeart();
+    lastHeartTime = time;
+  }
+  requestAnimationFrame(heartLoop);
+}
+requestAnimationFrame(heartLoop);
 
 /* MUSIC FADES */
 function fadeOutMusic(cb){
@@ -407,25 +404,25 @@ function playMusicForPage(i){
     fadeInMusic();
   });
 }
+
 function unlockAudio(){
   if(musicStarted) return;
+  music.muted = false;
   playMusicForPage(index);
   document.removeEventListener("click", unlockAudio);
   document.removeEventListener("keydown", unlockAudio);
 }
-
 document.addEventListener("click", unlockAudio);
 document.addEventListener("keydown", unlockAudio);
-
 
 /* PAGE LOGIC */
 function showPage(i){
   pages.forEach((p, idx) => p.classList.toggle("active", idx === i));
   document.body.style.setProperty("--overlay-opacity", darknessLevels[i]);
 
-  heartRate = i === pages.length - 1 ? 180 : 550;
+  heartDelay = i === pages.length - 1 ? 180 : 550;
+  maxHearts  = i === pages.length - 1 ? 45  : 25;
   heartsContainer.style.opacity = i === pages.length - 1 ? "0.9" : "0.6";
-  startHearts();
 
   playMusicForPage(i);
 
@@ -456,13 +453,12 @@ prevBtn.onclick = () => index>0 && navigate(-1);
 nextBtn.onclick = () => index<pages.length-1 && navigate(1);
 
 showPage(index);
-startHearts();
+
 /* MUTE LOGIC */
 const muteBtn = document.getElementById("muteBtn");
 let hasUserInteracted = false;
 
 muteBtn.addEventListener("click", () => {
-  // first interaction
   if(!hasUserInteracted){
     hasUserInteracted = true;
     music.muted = false;
@@ -473,13 +469,12 @@ muteBtn.addEventListener("click", () => {
       music.play().catch(()=>{});
     }
   }
-
   muteBtn.textContent = music.muted ? "🔇" : "🔊";
 });
-
-
 </script>
+
 
 </body>
 </html>
+
 
