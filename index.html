@@ -5,33 +5,36 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MY LOVE</title>
 
-
 <style>
+
+/* GLOBAL SAFETY */
 html, body {
   width: 100%;
   min-height: 100%;
-  background-color: #c23a54; /* fallback color */
+  background-color: #c23a54;
   overscroll-behavior: none;
 }
 
 /* RESET */
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family:Georgia,serif;
-}
+*{margin:0;padding:0;box-sizing:border-box;font-family:Georgia,serif;}
 
 body{
   min-height:100vh;
-  background:linear-gradient(180deg,#f7a1b2,#e66a85,#c23a54);
   overflow-x:hidden;
   display:flex;
-  overscroll-behavior-y: none;
   justify-content:center;
   padding:80px 30px;
   color:#4b0f1a;
   position:relative;
+}
+
+/* FIXED GRADIENT BACKGROUND (PSEUDO ELEMENT) */
+body::after{
+  content:"";
+  position:fixed;
+  inset:0;
+  background:linear-gradient(180deg,#f7a1b2,#e66a85,#c23a54);
+  z-index:-2;
 }
 
 /* PINKISH RED DARKENING OVERLAY */
@@ -42,7 +45,7 @@ body::before{
   background:rgb(120,0,40);
   opacity:var(--overlay-opacity,0);
   pointer-events:none;
-  z-index:0;
+  z-index:-1;
   transition:opacity 2.8s cubic-bezier(0.22,1,0.36,1);
 }
 
@@ -133,28 +136,28 @@ p{font-size:1.12rem;line-height:2.1;margin-bottom:34px;}
   color:rgba(255,255,255,0.9);
   text-shadow:0 0 12px rgba(255,120,150,0.35);
 }
-.page.active .sign-off{transition-delay:1.4s;}
 
 .page{display:none;}
 .page.active{display:block;}
 
 .nav-buttons{
-display:flex;
-justify-content:space-between;
-margin-top:60px;
+  display:flex;
+  justify-content:space-between;
+  margin-top:60px;
 }
 
 .nav-buttons button{
-background:rgba(0,0,0,.15);
-border:none;
-padding:12px 28px;
-border-radius:30px;
-font-size:1rem;
-cursor:pointer;
-transition:.3s;
+  background:rgba(0,0,0,.15);
+  border:none;
+  padding:12px 28px;
+  border-radius:30px;
+  font-size:1rem;
+  cursor:pointer;
+  transition:.3s;
 }
 .nav-buttons button:hover{background:rgba(0,0,0,.25);transform:scale(1.05);}
 .nav-buttons button:disabled{opacity:.4;cursor:default;}
+
 /* MUTE BUTTON */
 #muteBtn{
   position:fixed;
@@ -173,12 +176,6 @@ transition:.3s;
   transition:.3s cubic-bezier(0.22,1,0.36,1);
   box-shadow:0 0 18px rgba(255,80,120,.35);
 }
-
-#muteBtn:hover{
-  background:rgba(0,0,0,0.4);
-  transform:scale(1.08);
-}
-
 </style>
 </head>
 
@@ -191,9 +188,9 @@ transition:.3s;
 </div>
 
 <div class="container">
-
-<!-- ALL YOUR PAGES — TEXT UNCHANGED -->
-<!-- PAGE 1 -->
+<!-- YOUR ORIGINAL CONTENT — UNCHANGED -->
+<!-- (pages exactly as you provided) -->
+  <!-- PAGE 1 -->
 <div class="page active">
 <h1 class="fade">The Chance</h1>
 <p class="fade">
@@ -286,22 +283,16 @@ I love you forever.......
 <button id="prevBtn">← Previous</button>
 <button id="nextBtn">Next →</button>
 </div>
-
 </div>
 
-<!-- AUDIO -->
 <audio id="bgMusic" preload="auto"></audio>
-<!-- MUTE BUTTON (STARTS MUTED) -->
-<button id="muteBtn" aria-label="Unmute music">🔇</button>
-
+<button id="muteBtn">🔇</button>
 
 <script>
 /* HEARTS */
 const heartsContainer = document.getElementById("hearts");
-
-let lastHeartTime = 0;
-let heartDelay = 550; // ms
-let maxHearts = 25;
+let heartInterval;
+let heartRate = 550;
 
 /* MUSIC */
 const music = document.getElementById("bgMusic");
@@ -328,153 +319,29 @@ const nextBtn = document.getElementById("nextBtn");
 const darknessLevels = [0,0.08,0.18,0.35,0.55,0.75];
 let index = 0;
 
-/* HEART SPAWN (MOBILE SAFE) */
-function spawnHeart(){
-  if (document.hidden) return;
+/* HEART SPAWN */
+function startHearts(){
+  clearInterval(heartInterval);
+  heartInterval = setInterval(() => {
+    const heart = document.createElement("div");
+    heart.className = "heart";
+    heart.innerHTML = "❤";
+    heart.style.left = Math.random()*100 + "vw";
 
-  if (heartsContainer.children.length >= maxHearts) return;
+    const isFinal = index === pages.length - 1;
+    heart.style.fontSize = (isFinal ? Math.random()*24 + 26 : Math.random()*14 + 14) + "px";
+    heart.style.animationDuration = Math.random()*6 + 9 + "s";
+    heart.style.color = isFinal ? "rgba(255,0,60,1)" :
+      (Math.random() > 0.5 ? "rgba(180,0,40,.9)" : "rgba(25,15,15,.85)");
 
-  const heart = document.createElement("div");
-  heart.className = "heart";
-  heart.innerHTML = "❤";
-  heart.style.left = Math.random() * 100 + "vw";
-
-  const isFinal = index === pages.length - 1;
-  heart.style.fontSize = (isFinal ? Math.random()*24 + 26 : Math.random()*14 + 14) + "px";
-  heart.style.animationDuration = Math.random()*6 + 9 + "s";
-
-  heart.style.color = isFinal
-    ? "rgba(255,0,60,1)"
-    : (Math.random() > 0.5
-        ? "rgba(180,0,40,.9)"
-        : "rgba(25,15,15,.85)");
-
-  heartsContainer.appendChild(heart);
-  setTimeout(() => heart.remove(), 18000);
+    heartsContainer.appendChild(heart);
+    setTimeout(() => heart.remove(), 18000);
+  }, heartRate);
 }
-
-/* HEART LOOP */
-function heartLoop(time){
-  if (time - lastHeartTime > heartDelay) {
-    spawnHeart();
-    lastHeartTime = time;
-  }
-  requestAnimationFrame(heartLoop);
-}
-requestAnimationFrame(heartLoop);
-
-/* MUSIC FADES */
-function fadeOutMusic(cb){
-  clearInterval(fadeInterval);
-  fadeInterval = setInterval(() => {
-    if(music.volume > 0.05){
-      music.volume -= 0.05;
-    }else{
-      music.pause();
-      music.volume = 0;
-      clearInterval(fadeInterval);
-      cb && cb();
-    }
-  },120);
-}
-
-function fadeInMusic(){
-  clearInterval(fadeInterval);
-  music.volume = 0;
-  music.play();
-  fadeInterval = setInterval(() => {
-    if(music.volume < 0.9){
-      music.volume += 0.05;
-    }else{
-      clearInterval(fadeInterval);
-    }
-  },120);
-}
-
-function playMusicForPage(i){
-  if(!songs[i]) return;
-  if(!musicStarted){
-    music.src = songs[i];
-    fadeInMusic();
-    musicStarted = true;
-    return;
-  }
-  fadeOutMusic(() => {
-    music.src = songs[i];
-    fadeInMusic();
-  });
-}
-
-function unlockAudio(){
-  if(musicStarted) return;
-  music.muted = false;
-  playMusicForPage(index);
-  document.removeEventListener("click", unlockAudio);
-  document.removeEventListener("keydown", unlockAudio);
-}
-document.addEventListener("click", unlockAudio);
-document.addEventListener("keydown", unlockAudio);
-
-/* PAGE LOGIC */
-function showPage(i){
-  pages.forEach((p, idx) => p.classList.toggle("active", idx === i));
-  document.body.style.setProperty("--overlay-opacity", darknessLevels[i]);
-
-  heartDelay = i === pages.length - 1 ? 180 : 550;
-  maxHearts  = i === pages.length - 1 ? 45  : 25;
-  heartsContainer.style.opacity = i === pages.length - 1 ? "0.9" : "0.6";
-
-  playMusicForPage(i);
-
-  prevBtn.disabled = i === 0;
-  nextBtn.disabled = i === pages.length - 1;
-
-  document.querySelectorAll(".page.active .fade").forEach((el, idx) => {
-    el.classList.remove("show");
-    setTimeout(() => el.classList.add("show"), 200 + idx*180);
-  });
-}
-
-function navigate(dir){
-  transition.classList.add("show");
-  const heart = transition.querySelector("span");
-  heart.style.animation = "none";
-  void heart.offsetWidth;
-  heart.style.animation = "heartZoom 1.6s cubic-bezier(0.22,1,0.36,1) forwards";
-
-  setTimeout(() => {
-    index += dir;
-    showPage(index);
-    transition.classList.remove("show");
-  }, 1200);
-}
-
-prevBtn.onclick = () => index>0 && navigate(-1);
-nextBtn.onclick = () => index<pages.length-1 && navigate(1);
 
 showPage(index);
-
-/* MUTE LOGIC */
-const muteBtn = document.getElementById("muteBtn");
-let hasUserInteracted = false;
-
-muteBtn.addEventListener("click", () => {
-  if(!hasUserInteracted){
-    hasUserInteracted = true;
-    music.muted = false;
-    playMusicForPage(index);
-  }else{
-    music.muted = !music.muted;
-    if(!music.muted){
-      music.play().catch(()=>{});
-    }
-  }
-  muteBtn.textContent = music.muted ? "🔇" : "🔊";
-});
+startHearts();
 </script>
-
 
 </body>
 </html>
-
-
