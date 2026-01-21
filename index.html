@@ -6,47 +6,38 @@
 <title>MY LOVE</title>
 
 <style>
-  html::before{
-  content:"";
-  position:fixed;
-  inset:0;
-  background:linear-gradient(180deg,#f7a1b2,#e66a85,#c23a54);
-  z-index:-2;
-}
-
 
 /* GLOBAL SAFETY */
 html, body {
   width: 100%;
   min-height: 100%;
-  background-color: #c23a54;
   overscroll-behavior: none;
 }
 
 /* RESET */
 *{margin:0;padding:0;box-sizing:border-box;font-family:Georgia,serif;}
 
-body{
-  min-height:100vh;
-  overflow-x:hidden;
-  display:flex;
-  justify-content:center;
-  background:none;
-  padding:80px 30px;
-  color:#4b0f1a;
-  position:relative;
-}
-
-/* FIXED GRADIENT BACKGROUND (PSEUDO ELEMENT) */
-body::after{
-  content:"";
+/* FIXED BACKGROUND LAYER */
+#bg-layer{
   position:fixed;
   inset:0;
   background:linear-gradient(180deg,#f7a1b2,#e66a85,#c23a54);
   z-index:-2;
 }
 
-/* PINKISH RED DARKENING OVERLAY */
+/* BODY */
+body{
+  min-height:100vh;
+  overflow-x:hidden;
+  display:flex;
+  justify-content:center;
+  padding:80px 30px;
+  color:#4b0f1a;
+  position:relative;
+  background:none;
+}
+
+/* DARK OVERLAY (UNCHANGED) */
 body::before{
   content:"";
   position:fixed;
@@ -99,7 +90,12 @@ body::before{
   100%{transform:scale(25);opacity:0;filter:blur(10px);}
 }
 
-.container{max-width:740px;width:100%;position:relative;z-index:2;}
+.container{
+  max-width:740px;
+  width:100%;
+  position:relative;
+  z-index:2;
+}
 
 /* FADE */
 .fade{
@@ -185,10 +181,13 @@ p{font-size:1.12rem;line-height:2.1;margin-bottom:34px;}
   transition:.3s cubic-bezier(0.22,1,0.36,1);
   box-shadow:0 0 18px rgba(255,80,120,.35);
 }
+
 </style>
 </head>
 
 <body>
+
+<div id="bg-layer"></div>
 
 <div class="hearts" id="hearts"></div>
 
@@ -197,9 +196,7 @@ p{font-size:1.12rem;line-height:2.1;margin-bottom:34px;}
 </div>
 
 <div class="container">
-<!-- YOUR ORIGINAL CONTENT — UNCHANGED -->
-<!-- (pages exactly as you provided) -->
-  <!-- PAGE 1 -->
+<!-- PAGE 1 -->
 <div class="page active">
 <h1 class="fade">The Chance</h1>
 <p class="fade">
@@ -292,66 +289,13 @@ I love you forever.......
 <button id="prevBtn">← Previous</button>
 <button id="nextBtn">Next →</button>
 </div>
+
+
 </div>
 
 <audio id="bgMusic" preload="auto"></audio>
 <button id="muteBtn">🔇</button>
 
-<script>
-/* HEARTS */
-const heartsContainer = document.getElementById("hearts");
-let heartInterval;
-let heartRate = 550;
-
-/* MUSIC */
-const music = document.getElementById("bgMusic");
-music.muted = true;
-music.volume = 0.9;
-
-const songs = [
-  "music/page1.mp3",
-  "music/page2.mp3",
-  "music/page3.mp3",
-  "music/page4.mp3",
-  "music/page5.mp3",
-  "music/final.mp3"
-];
-let musicStarted = false;
-let fadeInterval;
-
-/* PAGES */
-const pages = document.querySelectorAll(".page");
-const transition = document.getElementById("heartTransition");
-const prevBtn = document.getElementById("prevBtn");
-const nextBtn = document.getElementById("nextBtn");
-
-const darknessLevels = [0,0.08,0.18,0.35,0.55,0.75];
-let index = 0;
-
-/* HEART SPAWN */
-function startHearts(){
-  clearInterval(heartInterval);
-  heartInterval = setInterval(() => {
-    const heart = document.createElement("div");
-    heart.className = "heart";
-    heart.innerHTML = "❤";
-    heart.style.left = Math.random()*100 + "vw";
-
-    const isFinal = index === pages.length - 1;
-    heart.style.fontSize = (isFinal ? Math.random()*24 + 26 : Math.random()*14 + 14) + "px";
-    heart.style.animationDuration = Math.random()*6 + 9 + "s";
-    heart.style.color = isFinal ? "rgba(255,0,60,1)" :
-      (Math.random() > 0.5 ? "rgba(180,0,40,.9)" : "rgba(25,15,15,.85)");
-
-    heartsContainer.appendChild(heart);
-    setTimeout(() => heart.remove(), 18000);
-  }, heartRate);
-}
-
-showPage(index);
-startHearts();
-</script>
-
+<!-- 🔒 KEEP YOUR ORIGINAL SCRIPT EXACTLY 🔒 -->
 </body>
 </html>
-
