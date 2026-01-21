@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MY LOVE</title>
+
+
+<style>
+html, body {
+  width: 100%;
+  min-height: 100%;
+  background-color: #c23a54; /* fallback color */
+  overscroll-behavior: none;
+}
+
+/* RESET */
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Georgia,serif;
+}
+
+body{
+  min-height:100vh;
+  background:linear-gradient(180deg,#f7a1b2,#e66a85,#c23a54);
+  overflow-x:hidden;
+  display:flex;
+  overscroll-behavior-y: none;
+  justify-content:center;
+  padding:80px 30px;
+  color:#4b0f1a;
+  position:relative;
+}
+
+/* PINKISH RED DARKENING OVERLAY */
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background:rgb(120,0,40);
+  opacity:var(--overlay-opacity,0);
+  pointer-events:none;
+  z-index:0;
+  transition:opacity 2.8s cubic-bezier(0.22,1,0.36,1);
+}
+
+/* FLOATING HEARTS */
+.hearts{position:fixed;inset:0;pointer-events:none;z-index:1;}
+.heart{
+  position:absolute;
+  bottom:-30px;
+  opacity:.6;
+  animation:floatUp linear infinite;
+}
+
+@keyframes floatUp{
+  0%{transform:translateY(0) scale(.9);opacity:0;}
+  15%{opacity:.9;}
+  100%{transform:translateY(-130vh) scale(1.5);opacity:0;}
+}
+
+/* HEART TRANSITION */
+.heart-transition{
+  position:fixed;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  pointer-events:none;
+  z-index:999;
+  background:rgba(0,0,0,0.15);
+  opacity:0;
+  transition:opacity .6s ease;
+}
+.heart-transition.show{opacity:1;}
+
+.heart-transition span{
+  font-size:60px;
+  color:#b00028;
+}
+
+@keyframes heartZoom{
+  0%{transform:scale(0.1);opacity:0;filter:blur(4px);}
+  35%{transform:scale(8);opacity:1;filter:blur(0);}
+  100%{transform:scale(25);opacity:0;filter:blur(10px);}
+}
+
+.container{max-width:740px;width:100%;position:relative;z-index:2;}
+
+/* FADE */
+.fade{
+  opacity:0;
+  transform:translateY(35px);
+  transition:
+    opacity 2.6s cubic-bezier(0.22,1,0.36,1),
+    transform 2.6s cubic-bezier(0.22,1,0.36,1);
+}
+.fade.show{opacity:1;transform:translateY(0);}
+
+h1{margin:80px 0 35px;font-weight:normal;color:#5a0f1f;letter-spacing:.6px;}
+p{font-size:1.12rem;line-height:2.1;margin-bottom:34px;}
+
+/* FINAL LOVE */
+.final-love{
+  margin:160px 0 30px;
+  text-align:center;
+  font-size:4.2rem;
+  font-weight:bold;
+  letter-spacing:6px;
+  color:#000000;
+  opacity:0;
+  transform:scale(0.6);
+  animation:loveReveal 3.5s cubic-bezier(0.22,1,0.36,1) forwards;
+  text-shadow:
+    0 0 20px rgba(255,80,100,.4),
+    0 0 60px rgba(255,0,50,.25);
+}
+
+@keyframes loveReveal{
+  0%{opacity:0;transform:scale(0.6);letter-spacing:20px;filter:blur(10px);}
+  50%{opacity:1;transform:scale(1.05);filter:blur(0);}
+  100%{transform:scale(1);letter-spacing:6px;}
+}
+
+/* SIGN OFF */
+.sign-off{
+  text-align:center;
+  font-size:1.2rem;
+  font-style:italic;
+  margin-bottom:80px;
+  color:rgba(255,255,255,0.9);
+  text-shadow:0 0 12px rgba(255,120,150,0.35);
+}
+.page.active .sign-off{transition-delay:1.4s;}
+
+.page{display:none;}
+.page.active{display:block;}
+
+.nav-buttons{
+display:flex;
+justify-content:space-between;
+margin-top:60px;
+}
+
+.nav-buttons button{
+background:rgba(0,0,0,.15);
+border:none;
+padding:12px 28px;
+border-radius:30px;
+font-size:1rem;
+cursor:pointer;
+transition:.3s;
+}
+.nav-buttons button:hover{background:rgba(0,0,0,.25);transform:scale(1.05);}
+.nav-buttons button:disabled{opacity:.4;cursor:default;}
+/* MUTE BUTTON */
+#muteBtn{
+  position:fixed;
+  bottom:25px;
+  right:25px;
+  z-index:1000;
+  background:rgba(0,0,0,0.25);
+  border:none;
+  width:54px;
+  height:54px;
+  border-radius:50%;
+  font-size:22px;
+  cursor:pointer;
+  color:#fff;
+  backdrop-filter:blur(6px);
+  transition:.3s cubic-bezier(0.22,1,0.36,1);
+  box-shadow:0 0 18px rgba(255,80,120,.35);
+}
+
+#muteBtn:hover{
+  background:rgba(0,0,0,0.4);
+  transform:scale(1.08);
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="hearts" id="hearts"></div>
+
+<div class="heart-transition" id="heartTransition">
+<span>❤</span>
+</div>
+
+<div class="container">
+
+<!-- ALL YOUR PAGES — TEXT UNCHANGED -->
+<!-- PAGE 1 -->
+<div class="page active">
+<h1 class="fade">The Chance</h1>
+<p class="fade">
+Time—the healer of all wounds—gave me the strength and the chance to face you again.
+This time, I decided to take a chance.
+I reached out to you, expressing my feelings honestly.
+But you were in pain, and I didn't want to add to it.
+I told you that I cared for you deeply, but I also respected your need for space.
+I'm shouldering the responsibilities not only of my own life, but also of my family's.
+I needed to be strong for them—but I am also human, someone who needs love and care like everyone else.
+I wanted to cry. Only with you, I wanted to share my everything with you.I thought that i can share any emotion with you.
+With the complexities of life and emotions, I understand that not everything can be given easily to me.
+And i didnt wanted you to share the burden of my emotions.
+Once more I hestitated.
+</p>
+</div>
+
+<!-- PAGE 2 -->
+<div class="page">
+<h1 class="fade">December 15th</h1>
+<p class="fade">
+The day i opened my emotions to you completely.
+I told you everything that i felt for you and The way i wanted to be with you.I shared my inner battles with you.
+You listened patiently, understanding the depth of my feelings.
+And then,the hour of day arrived when you responded.
+You told me that you like me too,but not love.
+And in that moment, I realized something
+<br><br>
+<strong style="display:block;text-align:center;font-weight:bold;letter-spacing:2px;">
+I WAS ALREADY YOURS
+</strong>
+<br>
+I was confused at first.You said that you wanted to marry me and you dont have trust in love. I was like what?
+But as you explained, I began to understand your perspective.
+You spoke of the pain you had experienced in the past, and how it made you cautious about love.
+You expressed your desire for a stable and secure relationship, one that could withstand the challenges of life.
+At the end of day all that mattered to me was that you wanted to be with me and that we could build a future together.
+</p>
+</div>
+
+<!-- PAGE 3 -->
+<div class="page">
+<h1 class="fade">The Travel</h1>
+<p class="fade">
+After that day,I waited for the day that we meet. we talked about the date but my eagerness got me.I came to your home.I was shy when i met you.
+I always wanted to see into your eyes.I wanted to drown in the ocean of your eyes.My heart raced as I approached you.It skipped the time i hugged you.
+Checking myself if you are real or a dream.
+Seeing you in the moonlight was magical.I felt like the luckiest person alive to have you in my arms.The stars above started to shine brighter as if my senses were awakening to a new reality.
+The time flew fast when you are near to me.I wished that moment could last forever.
+As we parted ways, I felt a bittersweet mix of emotions. I was grateful for the time we had together, but I also longed for more.
+</p>
+</div>
+
+<!-- PAGE 4 -->
+<div class="page">
+<h1 class="fade">Sun and Moon</h1>
+<p class="fade">
+Even though you never said me I love you,i never felt down,because the moon doesn't need to say to the sun that I love you.
+I always thought that you are my moon, the one who lights up my darkest nights.The cool breeze that soothes my soul.You are the calm in my chaos, the serenity in my storm.
+You are my moon,I'll be your sun.Like sun to the moon, I'll be there to warm you when you feel cold, to light your way when you feel lost.
+Together, we create a beautiful balance, a dance of light and shadow, warmth and coolness.
+Just as the sun and moon coexist in the sky, we too can find harmony in our relationship.
+Just like eclipses there might be times when we feel overshadowed by challenges, but together we can overcome anything.
+I promise to be your sun, bringing warmth and light to your life, just as you are my moon.
+Just as we shine under respective lights, we will shine together in our journey ahead.
+Thank you for being my moon,my calm,my peace, and my everything.
+My love for you was uncoditional and everlasting.
+</p>
+</div>
+
+<!-- PAGE 5 -->
+<div class="page">
+<h1 class="fade">Prema</h1>
+<p class="fade">
+Dheggariki vasthey po antav,malli nuvvey raa antav.vasthey siggu antav,raakhapothey miss you antav.Love you chepthey ha ,
+Hate you chepthey break cheyyaku ,
+friends antey yes lovers antey no, husband antey yes ,boy friend antey no, love antey no , prema antey yes.
+nuvvu kakpothey inkevaru antaru cheppu nannu.
+I love you forever.......
+</p>
+</div>
+
+<!-- PAGE 6 -->
+<div class="page">
+<div class="final-love fade">I LOVE YOU</div>
+<div class="sign-off fade">— Your Sun, Raghav</div>
+</div>
+
+<div class="nav-buttons">
+<button id="prevBtn">← Previous</button>
+<button id="nextBtn">Next →</button>
+</div>
+
+</div>
+
+<!-- AUDIO -->
+<audio id="bgMusic" preload="auto"></audio>
+<!-- MUTE BUTTON (STARTS MUTED) -->
+<button id="muteBtn" aria-label="Unmute music">🔇</button>
+
+
+<script>
+/* HEARTS */
+const heartsContainer = document.getElementById("hearts");
+let heartInterval;
+let heartRate = 550;
+
+/* MUSIC */
+const music = document.getElementById("bgMusic");
+music.muted = true;     // start muted
+music.volume = 0.9;    // set volume (will apply after unmute)
+
+const songs = [
+  "music/page1.mp3",
+  "music/page2.mp3",
+  "music/page3.mp3",
+  "music/page4.mp3",
+  "music/page5.mp3",
+  "music/final.mp3"
+];
+let musicStarted = false;
+let fadeInterval;
+
+/* PAGES */
+const pages = document.querySelectorAll(".page");
+const transition = document.getElementById("heartTransition");
+const prevBtn = document.getElementById("prevBtn");
+const nextBtn = document.getElementById("nextBtn");
+
+const darknessLevels = [0,0.08,0.18,0.35,0.55,0.75];
+let index = 0;
+
+/* HEART SPAWN */
+function startHearts(){
+  clearInterval(heartInterval);
+  heartInterval = setInterval(() => {
+    const heart = document.createElement("div");
+    heart.className = "heart";
+    heart.innerHTML = "❤";
+    heart.style.left = Math.random()*100 + "vw";
+
+    const isFinal = index === pages.length - 1;
+    heart.style.fontSize = (isFinal ? Math.random()*24 + 26 : Math.random()*14 + 14) + "px";
+    heart.style.animationDuration = Math.random()*6 + 9 + "s";
+
+    if(isFinal){
+      heart.style.color = "rgba(255,0,60,1)";
+    }else{
+      heart.style.color = Math.random() > 0.5
+        ? "rgba(180,0,40,.9)"
+        : "rgba(25,15,15,.85)";
+    }
+
+    heartsContainer.appendChild(heart);
+    setTimeout(() => heart.remove(), 18000);
+  }, heartRate);
+}
+
+/* MUSIC FADES */
+function fadeOutMusic(cb){
+  clearInterval(fadeInterval);
+  fadeInterval = setInterval(() => {
+    if(music.volume > 0.05){
+      music.volume -= 0.05;
+    }else{
+      music.pause();
+      music.volume = 0;
+      clearInterval(fadeInterval);
+      cb && cb();
+    }
+  },120);
+}
+
+function fadeInMusic(){
+  clearInterval(fadeInterval);
+  music.volume = 0;
+  music.play();
+  fadeInterval = setInterval(() => {
+    if(music.volume < 0.9){
+      music.volume += 0.05;
+    }else{
+      clearInterval(fadeInterval);
+    }
+  },120);
+}
+
+function playMusicForPage(i){
+  if(!songs[i]) return;
+  if(!musicStarted){
+    music.src = songs[i];
+    fadeInMusic();
+    musicStarted = true;
+    return;
+  }
+  fadeOutMusic(() => {
+    music.src = songs[i];
+    fadeInMusic();
+  });
+}
+function unlockAudio(){
+  if(musicStarted) return;
+  playMusicForPage(index);
+  document.removeEventListener("click", unlockAudio);
+  document.removeEventListener("keydown", unlockAudio);
+}
+
+document.addEventListener("click", unlockAudio);
+document.addEventListener("keydown", unlockAudio);
+
+
+/* PAGE LOGIC */
+function showPage(i){
+  pages.forEach((p, idx) => p.classList.toggle("active", idx === i));
+  document.body.style.setProperty("--overlay-opacity", darknessLevels[i]);
+
+  heartRate = i === pages.length - 1 ? 180 : 550;
+  heartsContainer.style.opacity = i === pages.length - 1 ? "0.9" : "0.6";
+  startHearts();
+
+  playMusicForPage(i);
+
+  prevBtn.disabled = i === 0;
+  nextBtn.disabled = i === pages.length - 1;
+
+  document.querySelectorAll(".page.active .fade").forEach((el, idx) => {
+    el.classList.remove("show");
+    setTimeout(() => el.classList.add("show"), 200 + idx*180);
+  });
+}
+
+function navigate(dir){
+  transition.classList.add("show");
+  const heart = transition.querySelector("span");
+  heart.style.animation = "none";
+  void heart.offsetWidth;
+  heart.style.animation = "heartZoom 1.6s cubic-bezier(0.22,1,0.36,1) forwards";
+
+  setTimeout(() => {
+    index += dir;
+    showPage(index);
+    transition.classList.remove("show");
+  }, 1200);
+}
+
+prevBtn.onclick = () => index>0 && navigate(-1);
+nextBtn.onclick = () => index<pages.length-1 && navigate(1);
+
+showPage(index);
+startHearts();
+/* MUTE LOGIC */
+const muteBtn = document.getElementById("muteBtn");
+let hasUserInteracted = false;
+
+muteBtn.addEventListener("click", () => {
+  // first interaction
+  if(!hasUserInteracted){
+    hasUserInteracted = true;
+    music.muted = false;
+    playMusicForPage(index);
+  }else{
+    music.muted = !music.muted;
+    if(!music.muted){
+      music.play().catch(()=>{});
+    }
+  }
+
+  muteBtn.textContent = music.muted ? "🔇" : "🔊";
+});
+
+
+</script>
+
+</body>
+</html>
